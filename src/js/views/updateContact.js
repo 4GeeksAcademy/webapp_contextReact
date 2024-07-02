@@ -1,16 +1,30 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-export const Demo = () => {
-    const { actions } = useContext(Context);
+
+export const UpDateContact = () => {
+    const { store, actions } = useContext(Context);
     const [contact, setContact] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        address: ""
+
+        name: store.contact.name,
+        email: store.contact.email,
+        phone: store.contact.phone,
+        address: store.contact.address,
+        id: store.contact.id
     });
+   console.log(store.contact)
+
     const navigate = useNavigate();
+    // const { id } = useParams(); // Obtener el ID del contacto desde los parámetros de la URL
+
+    // useEffect(() => {
+    //     const contactToUpdate = store.contacts.find((contact) => contact.id === parseInt(id));
+    //     if (contactToUpdate) {
+    //         setContact(contactToUpdate);
+    //     }
+    // }, [store.contacts, id]);
 
     const handleChange = (e) => {
         setContact({
@@ -21,16 +35,17 @@ export const Demo = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        actions.createContact(contact)
+        actions.updateContact(contact)
             .then(() => {
-                actions.getContacts(); // Refresh the contacts list after creating a new contact
+                actions.getContacts(); // Refrescar la lista de contactos después de actualizar un contacto
                 navigate("/");
-            });
+            })
+            .catch((error) => console.error("Error updating contact:", error));
     };
 
     return (
         <div className="container mt-5">
-            <h1>Add a new contact</h1>
+            <h1>Update contact</h1>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="name" className="form-label">Full Name</label>
@@ -80,56 +95,10 @@ export const Demo = () => {
                         placeholder="Enter address"
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">Save</button>
+                <button type="submit" onClick={handleSubmit} className="btn btn-primary">Save</button>
                 <a href="/" className="btn btn-link">Return to contacts</a>
             </form>
         </div>
     );
 };
-
-
-
-
-// import React, { useState, useEffect, useContext } from "react";
-// import { Link } from "react-router-dom";
-
-// import { Context } from "../store/appContext";
-
-// import "../../styles/demo.css";
-
-// export const Demo = () => {
-// 	const { store, actions } = useContext(Context);
-
-// 	return (
-// 		<div className="container">
-// 			<ul className="list-group">
-// 				{store.demo.map((item, index) => {
-// 					return (
-// 						<li
-// 							key={index}
-// 							className="list-group-item d-flex justify-content-between"
-// 							style={{ background: item.background }}>
-// 							<Link to={"/single/" + index}>
-// 								<span>Link to: {item.title}</span>
-// 							</Link>
-// 							{// Conditional render example
-// 							// Check to see if the background is orange, if so, display the message
-// 							item.background === "orange" ? (
-// 								<p style={{ color: item.initial }}>
-// 									Check store/flux.js scroll to the actions to see the code
-// 								</p>
-// 							) : null}
-// 							<button className="btn btn-success" onClick={() => actions.changeColor(index, "orange")}>
-// 								Change Color
-// 							</button>
-// 						</li>
-// 					);
-// 				})}
-// 			</ul>
-// 			<br />
-// 			<Link to="/">
-// 				<button className="btn btn-primary">Back home</button>
-// 			</Link>
-// 		</div>
-// 	);
-// };
+// export default UpDateContact
